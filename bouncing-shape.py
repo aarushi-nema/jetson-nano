@@ -1,0 +1,28 @@
+import cv2
+dispW=640
+dispH=480
+flip=2
+camSet='nvarguscamerasrc !  video/x-raw(memory:NVMM), width=3264, height=2464, format=NV12, framerate=21/1 ! nvvidconv flip-method='+str(flip)+' ! video/x-raw, width='+str(dispW)+', height='+str(dispH)+', format=BGRx ! videoconvert ! video/x-raw, format=BGR ! appsink'
+cam=cv2.VideoCapture(camSet)
+dispW=int(cam.get(cv2.CAP_PROP_FRAME_WIDTH))
+dispH=int(cam.get(cv2.CAP_PROP_FRAME_HEIGHT))
+BW= int(0.15*dispW)
+BH= int(0.25*dispH)
+posX=10
+posY=270
+dx=2
+dy=2
+while True:
+    ret, frame=cam.read()
+    frame=cv2.rectangle(frame,(posX,posY), (posX+BW, posY+BH),(255,0,0),-1)
+    posX=posX+dx
+    posY=posY+dy
+    if(posX+BW>=640 or posX<=0):
+        dx=dx*(-1)
+    if(posY+BH>=480 or posY<=0):
+        dy=dy*(-1)
+    cv2.imshow('nanoCam', frame)
+    if cv2.waitKey(1) == ord('q'):
+        break
+cam.release()
+cv2.destroyAllWindows()
